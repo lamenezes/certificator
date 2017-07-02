@@ -1,0 +1,43 @@
+body {
+    padding: 25px;
+    font-family: sans-serif;
+    font-size: 18px;
+}
+
+@page{
+    size: A4 landscape;
+}
+
+#main {
+    text-align: justify;
+    margin-bottom: 50px;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+#signature {
+    border-top: 1px solid black;
+    padding-top: 15px;
+    text-align: center;
+}
+
+#top {
+    text-align: center;
+}
+
+#top img {
+    margin-top: -50px;
+    margin-bottom: 25px;
+}
+
+#bot {
+    font-size: 14px;
+    margin-left: 30px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 50px;
+}
