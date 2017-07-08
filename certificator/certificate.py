@@ -7,16 +7,16 @@ PATH = os.path.abspath(os.path.dirname(__file__))
 TEMPLATES_PATH = os.path.join(PATH, 'data')
 
 
-class Certifier:
+class Certificate:
     def __init__(self, destination_path='.', template_path=None, **kwargs):
         self.template_path = template_path
         self.destination_path = destination_path
 
     def get_meta(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_rows(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_template_path(self):
         if self.template_path:
