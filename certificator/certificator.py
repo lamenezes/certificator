@@ -1,3 +1,5 @@
+import csv
+import json
 import os.path
 
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -7,7 +9,8 @@ from . import config
 
 
 class BaseCertificator:
-    def __init__(self, destination_path='.', template_path=None, filename_format='certificate-{id:<3}.pdf'):
+    def __init__(self, destination_path='.', template_path=None,
+                 filename_format='certificate-{id:<3}.pdf'):
         self.template_path = template_path
         self.destination_path = destination_path
         self.filename_format = filename_format
@@ -63,13 +66,16 @@ class BaseCertificator:
 
 
 class CSVCertificator(BaseCertificator):
-    def __init__(self, template_path=None, delimiter=','):
-        self.template_path = template_path
+    def __init__(self, delimiter=',', meta_path='./meta.json', data_path='./data.csv', **kwargs):
+        super().__init__(**kwargs)
+        self.delimiter = delimiter
+        self.meta_path = meta_path
+        self.data_path = data_path
 
     def get_meta(self):
-        with open('meta.json', 'r') as f:
-            return json.loads(f.readall())
+        with open(self.meta_path) as f:
+            return json.loads(f.read())
 
     def get_certificate_data(self):
-        with open('rows.csv', 'r') as f:
-            return csv.DictReader(f, delimiter=self.delimiter)
+        with open(self.data_path) as f:
+            return [row for row in csv.DictReader(f)]

@@ -1,10 +1,14 @@
-from faker import Faker
+import os
 from unittest import mock
-import pytest
 
-from certificator.certificator import BaseCertificator
+import pytest
+from faker import Faker
+from json_encoder import json
+
+from certificator.certificator import BaseCertificator, CSVCertificator
 
 faker = Faker()
+PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 @pytest.fixture
@@ -16,8 +20,8 @@ def certificator():
 def fake_context():
     return {
         'city': faker.city(),
-        'date': faker.date_time(),
-        'full_date': faker.date(pattern=''),
+        'date': faker.date(pattern='%d/%m/%Y'),
+        'full_date': faker.date(pattern='%d %B %Y'),
         'organizer': faker.company(),
         'title': faker.sentence(),
         'workload': faker.random_int(min=4, max=300),
@@ -47,6 +51,16 @@ def mock_certificator(fake_context, certificate_data):
     return MockCertificator()
 
 
+@pytest.fixture
+def csv_certificator():
+    return CSVCertificator()
+
+
+@pytest.fixture
+def csv_certificate_data(certificate_data):
+    return '\n'.join(d['name'] for d in certificate_data)
+
+
 def test_base_certificator_certificator(certificator):
     assert certificator.template_path is None
     assert certificator.destination_path
@@ -67,7 +81,7 @@ def test_base_certificator_certificator_get_context(mock_certificator, fake_cont
     context = mock_certificator.get_context(foo='bar')
 
     assert context['foo'] == 'bar'
-    assert not fake_context.keys() - context.keys() 
+    assert not fake_context.keys() - context.keys()
 
 
 @mock.patch('certificator.certificator.PackageLoader')
@@ -77,12 +91,6 @@ def test_base_certificator_certificator_template(mock_env, mock_loader, certific
     assert mock_loader.called
     assert mock_env.called
     assert mock_env.return_value.get_template.called
-
-
-@mock.patch('certificator.certificator.HTML')
-def test_base_certificator_render(mock_html, mock_certificator, fake_context):
-    assert mock_certificator.render(fake_context)
-    assert mock_html.called_once_with(**fake_context)
 
 
 @mock.patch('certificator.certificator.HTML')
@@ -113,3 +121,17 @@ def test_base_certificator_generate(mock_certificator, certificate_data):
 
     assert mock_certificator.generate_one.called
     assert mock_certificator.generate_one.call_count == len(certificate_data)
+
+
+def test_csv_certificator(csv_certificator, fake_context):
+    assert isinstance(csv_certificator, (BaseCertificator, CSVCertificator))
+    assert csv_certificator.delimiter
+    assert csv_certificator.meta_path
+    assert csv_certificator.data_path
+
+
+def test_csv_certificator_get_meta(csv_certificator, fake_context):
+    with mock.patch('builtins.open', mock.mock_open(read_data=json.dumps(fake_context))):
+        meta = csv_certificator.get_meta()
+
+    assert meta == fake_context
