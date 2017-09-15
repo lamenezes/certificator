@@ -1,4 +1,5 @@
 jinja2
-weasyprint
 prettyconf
 pysimplemodel
+requests
+weasyprint
