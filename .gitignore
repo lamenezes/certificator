@@ -15,3 +15,5 @@ tests/.coverage
 build/
 tests/report/
 .env
+.cache
+.coverage
