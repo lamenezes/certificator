@@ -1,7 +1,8 @@
 import requests
-from prettyconf import config
 
-params = {'key': config('MEETUP_API_KEY')}
+from certificator import config
+
+params = {'key': config.MEETUP_API_KEY}
 
 
 def get_attendances(urlname, event_id):
