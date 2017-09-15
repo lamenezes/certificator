@@ -1,6 +1,6 @@
 import click
 
-from .meetup import MeetupCertificate
+from .meetup import MeetupCertificator
 
 
 @click.command()
@@ -9,7 +9,7 @@ from .meetup import MeetupCertificate
 @click.option('--event_id', '-e')
 @click.option('--template-path', '-t', type=click.Path(exists=True, dir_okay=True), default=None)
 def generate(destination, urlname, event_id, template_path):
-    certifier = MeetupCertificate(
+    certifier = MeetupCertificator(
         urlname=urlname,
         event_id=event_id,
         destination_path=destination,

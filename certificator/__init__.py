@@ -1,4 +1,5 @@
-from .certiicate import Certificat
+from .certificator import CSVCertificator
+from .meetup import MeetupCertificator
 
 
-__all__ = ('Certificate',)
+__all__ = ('CSVCertificator', 'MeetupCertificator')
