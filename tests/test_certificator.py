@@ -47,7 +47,7 @@ def mock_certificator(fake_context, certificate_data):
     return MockCertificator()
 
 
-def test_certificator(certificator):
+def test_base_certificator_certificator(certificator):
     assert certificator.template_path is None
     assert certificator.destination_path
     with pytest.raises(NotImplementedError):
@@ -56,14 +56,14 @@ def test_certificator(certificator):
         certificator.get_certificate_data()
 
 
-def test_get_template_path(certificator):
+def test_base_certificator_get_template_path(certificator):
     path = 'foo/bar'
     certificator.template_path = path
 
     assert certificator.get_template_path() == path
 
 
-def test_certificator_get_context(mock_certificator, fake_context):
+def test_base_certificator_certificator_get_context(mock_certificator, fake_context):
     context = mock_certificator.get_context(foo='bar')
 
     assert context['foo'] == 'bar'
@@ -72,7 +72,7 @@ def test_certificator_get_context(mock_certificator, fake_context):
 
 @mock.patch('certificator.certificator.PackageLoader')
 @mock.patch('certificator.certificator.Environment')
-def test_certificator_template(mock_env, mock_loader, certificator):
+def test_base_certificator_certificator_template(mock_env, mock_loader, certificator):
     assert certificator.template
     assert mock_loader.called
     assert mock_env.called
@@ -80,33 +80,33 @@ def test_certificator_template(mock_env, mock_loader, certificator):
 
 
 @mock.patch('certificator.certificator.HTML')
-def test_render(mock_html, mock_certificator, fake_context):
+def test_base_certificator_render(mock_html, mock_certificator, fake_context):
     assert mock_certificator.render(fake_context)
     assert mock_html.called_once_with(**fake_context)
 
 
 @mock.patch('certificator.certificator.HTML')
-def test_render(mock_html, certificator, fake_context):
+def test_base_certificator_render(mock_html, certificator, fake_context):
     with mock.patch('certificator.certificator.PackageLoader'), \
             mock.patch('certificator.certificator.Environment'):
         assert certificator.render(fake_context)
         assert mock_html.called_once_with(**fake_context)
 
 
-def test_get_filepath(mock_certificator):
+def test_base_certificator_get_filepath(mock_certificator):
     filepath = mock_certificator.get_filepath(id=10)
     assert '10' in filepath
     assert mock_certificator.destination_path in filepath
 
 
-def test_generate_one(mock_certificator, fake_context):
+def test_base_certificator_generate_one(mock_certificator, fake_context):
     fake_context['id'] = 1
     assert mock_certificator.generate_one(fake_context) is None
 
     assert mock_certificator.render.return_value.write_pdf.called
 
 
-def test_generate(mock_certificator, certificate_data):
+def test_base_certificator_generate(mock_certificator, certificate_data):
     mock_certificator.generate_one = mock.Mock()
 
     mock_certificator.generate()
