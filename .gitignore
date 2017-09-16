@@ -17,3 +17,4 @@ tests/report/
 .env
 .cache
 .coverage
+*.pdf

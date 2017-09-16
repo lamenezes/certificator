@@ -10,7 +10,7 @@ from . import config
 
 class BaseCertificator:
     def __init__(self, destination_path='.', template_path=None,
-                 filename_format='certificate-{id:<3}.pdf'):
+                 filename_format='certificate-{id:0>3}.pdf'):
         self.template_path = template_path
         self.destination_path = destination_path
         self.filename_format = filename_format
@@ -31,7 +31,7 @@ class BaseCertificator:
     def template(self):
         # TODO: get templates from '.', from ./templates and then certifier/templates
         env = Environment(
-            loader=PackageLoader('certifier', 'templates'),
+            loader=PackageLoader('certificator', 'templates'),
             autoescape=select_autoescape(['html', 'xml'])
         )
         return env.get_template(self.get_template_path())
