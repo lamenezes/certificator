@@ -8,11 +8,26 @@ Event certificate generator. Currently supports CSV/JSON + Meetup integration.
 How to install (TBD)
 --------------------
 
-TBD
+::
 
-----------
-How to use
-----------
+    pip install certificator
+
+
+------------------------------------
+How to use (using meetup.com Events)
+------------------------------------
+
+First you need to have a meetup API KEY (refer to meetup API docs on how to acquire it).
+Then set the environment variable `MEETUP_API_KEY` and run the following command:
+
+.. code:: bash
+
+    certificator --urlname your-meetup-urlname --event-id <meetup-event-id>
+
+
+------------------------------------
+How to use (using CSV file)
+------------------------------------
 
 With CSV files and JSON metadata:
 
