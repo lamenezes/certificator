@@ -2,17 +2,18 @@ import csv
 import json
 import os.path
 
-from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
 
 from . import config
 
 
 class BaseCertificator:
-    def __init__(self, destination_path='.', template_path=None,
+    def __init__(self, destination_path='.', template_path=None, template_filename='template.html',
                  filename_format='certificate-{id:0>3}.pdf'):
         self.template_path = template_path
         self.destination_path = destination_path
+        self.template_filename = template_filename
         self.filename_format = filename_format
 
     def get_meta(self):
@@ -21,20 +22,41 @@ class BaseCertificator:
     def get_certificate_data(self):
         raise NotImplementedError
 
-    def get_template_path(self):
-        if self.template_path:
-            return self.template_path
+    @property
+    def template_path(self):
+        return self._template_path
 
-        return 'default.html'
+    @template_path.setter
+    def template_path(self, path):
+        if not path:
+            self._template_path = path
+            return
+
+        assert os.path.exists(path), 'You must provide an existing folder with the correct permissions'
+
+        path = os.path.expanduser(path)
+        self._template_path = path
+
+    def get_template_paths(self):
+        paths = [
+            os.path.abspath('.'),
+            os.path.abspath('./templates'),
+            config.TEMPLATES_PATH,
+        ]
+
+        if not self.template_path:
+            return paths
+
+        return [self.template_path] + paths
 
     @property
     def template(self):
-        # TODO: get templates from '.', from ./templates and then certifier/templates
+        paths = self.get_template_paths()
         env = Environment(
-            loader=PackageLoader('certificator', 'templates'),
-            autoescape=select_autoescape(['html', 'xml'])
+            loader=FileSystemLoader(paths),
+            autoescape=select_autoescape(['html', 'xml']),
         )
-        return env.get_template(self.get_template_path())
+        return env.get_template(self.template_filename)
 
     def get_context(self, **kwargs):
         context = {}
@@ -47,7 +69,8 @@ class BaseCertificator:
 
     def render(self, context):
         raw_html = self.template.render(**context)
-        return HTML(string=raw_html, base_url=config.TEMPLATES_PATH)
+        base_url = os.path.dirname(self.template.filename)
+        return HTML(string=raw_html, base_url=base_url)
 
     def get_filepath(self, **kwargs):
         filename = self.filename_format.format(**kwargs)

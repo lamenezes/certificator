@@ -1,3 +1,5 @@
+import csv
+import io
 import os
 from unittest import mock
 
@@ -57,8 +59,14 @@ def csv_certificator():
 
 
 @pytest.fixture
-def csv_certificate_data(certificate_data):
-    return '\n'.join(d['name'] for d in certificate_data)
+def csv_certificate_file(certificate_data):
+    stream = io.StringIO()
+    writer = csv.DictWriter(stream, fieldnames=['name'])
+    writer.writeheader()
+    for row in certificate_data:
+        writer.writerow(row)
+    stream.seek(0)
+    return stream
 
 
 def test_base_certificator_certificator(certificator):
@@ -70,11 +78,30 @@ def test_base_certificator_certificator(certificator):
         certificator.get_certificate_data()
 
 
-def test_base_certificator_get_template_path(certificator):
+def test_base_certificator_template_path_set_invalid(certificator):
     path = 'foo/bar'
+    with pytest.raises(AssertionError):
+        certificator.template_path = path
+
+
+def test_base_certificator_template_path_set_valid(certificator):
+    path = os.path.abspath(__file__)
     certificator.template_path = path
 
-    assert certificator.get_template_path() == path
+    assert certificator.template_path == path
+
+
+def test_base_certificator_get_template_paths(certificator):
+    assert len(certificator.get_template_paths()) == 3
+
+
+def test_base_certificator_get_template_paths_custom_template_path(certificator):
+    path = os.path.abspath(__file__)
+    certificator.template_path = path
+
+    paths = certificator.get_template_paths()
+    assert len(paths) == 4
+    assert path in paths
 
 
 def test_base_certificator_certificator_get_context(mock_certificator, fake_context):
@@ -84,7 +111,7 @@ def test_base_certificator_certificator_get_context(mock_certificator, fake_cont
     assert not fake_context.keys() - context.keys()
 
 
-@mock.patch('certificator.certificator.PackageLoader')
+@mock.patch('certificator.certificator.FileSystemLoader')
 @mock.patch('certificator.certificator.Environment')
 def test_base_certificator_certificator_template(mock_env, mock_loader, certificator):
     assert certificator.template
@@ -95,8 +122,9 @@ def test_base_certificator_certificator_template(mock_env, mock_loader, certific
 
 @mock.patch('certificator.certificator.HTML')
 def test_base_certificator_render(mock_html, certificator, fake_context):
-    with mock.patch('certificator.certificator.PackageLoader'), \
-            mock.patch('certificator.certificator.Environment'):
+    with mock.patch('certificator.certificator.FileSystemLoader'), \
+            mock.patch('certificator.certificator.Environment') as mock_env:
+        mock_env.return_value.get_template.return_value.filename = __file__
         assert certificator.render(fake_context)
         assert mock_html.called_once_with(**fake_context)
 
@@ -135,3 +163,10 @@ def test_csv_certificator_get_meta(csv_certificator, fake_context):
         meta = csv_certificator.get_meta()
 
     assert meta == fake_context
+
+
+def test_csv_certificator_get_certificate_data(csv_certificator, csv_certificate_file, certificate_data):
+    with mock.patch('builtins.open', mock.Mock(return_value=csv_certificate_file)):
+        data = csv_certificator.get_certificate_data()
+
+    assert data == certificate_data
