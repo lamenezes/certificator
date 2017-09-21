@@ -4,9 +4,9 @@ Certificator
 
 Event certificate generator. Currently supports CSV/JSON + Meetup integration.
 
---------------------
-How to install (TBD)
---------------------
+--------------
+How to install
+--------------
 
 ::
 
