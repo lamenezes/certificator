@@ -9,6 +9,8 @@ from .meetup import MeetupCertificator
 @click.option('--event_id', '-e')
 @click.option('--template-path', '-t', type=click.Path(exists=True, dir_okay=True), default=None)
 def generate(destination, urlname, event_id, template_path):
+    assert urlname and event_id, "You must pass the --urlname and --event_id arguments"
+
     certifier = MeetupCertificator(
         urlname=urlname,
         event_id=event_id,

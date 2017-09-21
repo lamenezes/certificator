@@ -1,3 +1,4 @@
+click
 jinja2
 prettyconf
 pysimplemodel
