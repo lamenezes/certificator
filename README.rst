@@ -17,12 +17,9 @@ How to install (TBD)
 How to use (using meetup.com Events)
 ------------------------------------
 
-First you need to have a meetup API KEY (refer to meetup API docs on how to acquire it).
-Then set the environment variable `MEETUP_API_KEY` and run the following command:
-
 .. code:: bash
 
-    certificator --urlname your-meetup-urlname --event-id <meetup-event-id>
+    certificator --urlname <your-meetup-urlname> --event-id <meetup-event-id> --meetup-api-key <your-meetup-api-key>
 
 
 ------------------------------------
