@@ -1,4 +1,4 @@
 include *.txt
-include *.html
-include *.css
+include certificator/templates/*.html
+include certificator/templates/*.css
 global-exclude *.*~
