@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 
-from . import client as MeetupClient
+from .client import MeetupClient
 from ..certificator import BaseCertificator
 from .models import Event
 
