@@ -16,10 +16,12 @@ class BaseCertificator:
         self.template_filename = template_filename
         self.filename_format = filename_format
 
-    def get_meta(self):
+    @property
+    def meta(self):
         raise NotImplementedError
 
-    def get_certificate_data(self):
+    @property
+    def certificate_data(self):
         raise NotImplementedError
 
     @property
@@ -95,10 +97,12 @@ class CSVCertificator(BaseCertificator):
         self.meta_path = meta_path
         self.data_path = data_path
 
-    def get_meta(self):
+    @property
+    def meta(self):
         with open(self.meta_path) as f:
             return json.loads(f.read())
 
-    def get_certificate_data(self):
+    @property
+    def certificate_data(self):
         with open(self.data_path) as f:
             return [row for row in csv.DictReader(f)]
