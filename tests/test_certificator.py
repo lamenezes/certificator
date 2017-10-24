@@ -73,9 +73,9 @@ def test_base_certificator_certificator(certificator):
     assert certificator.template_path is None
     assert certificator.destination_path
     with pytest.raises(NotImplementedError):
-        certificator.get_meta()
+        certificator.meta
     with pytest.raises(NotImplementedError):
-        certificator.get_certificate_data()
+        certificator.certificate_data
 
 
 def test_base_certificator_template_path_set_invalid(certificator):
@@ -158,15 +158,15 @@ def test_csv_certificator(csv_certificator, fake_context):
     assert csv_certificator.data_path
 
 
-def test_csv_certificator_get_meta(csv_certificator, fake_context):
+def test_csv_certificator_meta(csv_certificator, fake_context):
     with mock.patch('builtins.open', mock.mock_open(read_data=json.dumps(fake_context))):
-        meta = csv_certificator.get_meta()
+        meta = csv_certificator.meta
 
     assert meta == fake_context
 
 
-def test_csv_certificator_get_certificate_data(csv_certificator, csv_certificate_file, certificate_data):
+def test_csv_certificator_certificate_data(csv_certificator, csv_certificate_file, certificate_data):
     with mock.patch('builtins.open', mock.Mock(return_value=csv_certificate_file)):
-        data = csv_certificator.get_certificate_data()
+        data = csv_certificator.certificate_data
 
     assert data == certificate_data
