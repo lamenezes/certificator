@@ -62,9 +62,8 @@ class BaseCertificator:
 
     def get_context(self, **kwargs):
         context = {}
-        meta = self.get_meta()
 
-        context.update(meta)
+        context.update(self.meta)
         context.update(kwargs)
 
         return context
@@ -84,7 +83,7 @@ class BaseCertificator:
         html.write_pdf(filepath)
 
     def generate(self):
-        data = self.get_certificate_data()
+        data = self.certificate_data
         for i, row in enumerate(data):
             context = self.get_context(id=i, **row)
             self.generate_one(context)
@@ -105,4 +104,4 @@ class CSVCertificator(BaseCertificator):
     @property
     def certificate_data(self):
         with open(self.data_path) as f:
-            return [row for row in csv.DictReader(f)]
+            return [row for row in csv.DictReader(f, delimiter=self.delimiter)]

@@ -32,16 +32,18 @@ def fake_context():
 
 @pytest.fixture()
 def certificate_data():
-    return [{'name': faker.name()} for _ in range(5)]
+    return [{'name': faker.name(), 'company': faker.company()} for _ in range(5)]
 
 
 @pytest.fixture
 def mock_certificator(fake_context, certificate_data):
     class MockCertificator(BaseCertificator):
-        def get_meta(self):
+        @property
+        def meta(self):
             return fake_context
 
-        def get_certificate_data(self):
+        @property
+        def certificate_data(self):
             return certificate_data
 
         @property
@@ -61,7 +63,19 @@ def csv_certificator():
 @pytest.fixture
 def csv_certificate_file(certificate_data):
     stream = io.StringIO()
-    writer = csv.DictWriter(stream, fieldnames=['name'])
+    writer = csv.DictWriter(stream, fieldnames=['name', 'company'])
+    writer.writeheader()
+    for row in certificate_data:
+        writer.writerow(row)
+    stream.seek(0)
+    return stream
+
+
+@pytest.fixture
+def semicolon_csv_certificate_file(certificate_data):
+    stream = io.StringIO()
+    writer = csv.DictWriter(stream, fieldnames=['name', 'company'],
+                            delimiter=';')
     writer.writeheader()
     for row in certificate_data:
         writer.writerow(row)
@@ -167,6 +181,13 @@ def test_csv_certificator_meta(csv_certificator, fake_context):
 
 def test_csv_certificator_certificate_data(csv_certificator, csv_certificate_file, certificate_data):
     with mock.patch('builtins.open', mock.Mock(return_value=csv_certificate_file)):
+        data = csv_certificator.certificate_data
+
+    assert data == certificate_data
+
+def test_csv_certificator_certificate_data_with_custom_delimiter(csv_certificator, semicolon_csv_certificate_file, certificate_data):
+    csv_certificator.delimiter = ';'
+    with mock.patch('builtins.open', mock.Mock(return_value=semicolon_csv_certificate_file)):
         data = csv_certificator.certificate_data
 
     assert data == certificate_data
