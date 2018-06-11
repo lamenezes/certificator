@@ -18,11 +18,11 @@ class BaseCertificator:
 
     @property
     def meta(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @property
     def certificate_data(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @property
     def template_path(self):
