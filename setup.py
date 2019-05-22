@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='certificator',
-    version='0.0.5',
+    version='0.1.0',
     description='Certificate Generator Tool and Library',
     url='https://github.com/lamenezes/certificator',
     author='Luiz Menezes',
