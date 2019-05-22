@@ -1,8 +1,8 @@
 language: python
 
 python:
-  - "3.6"
-  - "3.7"
+  - "3.6.8"
+  - "3.7.3"
 
 install:
     - pip install -Ur requirements-test.txt
