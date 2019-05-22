@@ -1,9 +1,9 @@
 import click
-import os
 
 from . import config
 from .meetup import MeetupCertificator
 from .certificator import CSVCertificator
+
 
 @click.group()
 def main():

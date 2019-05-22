@@ -185,6 +185,7 @@ def test_csv_certificator_certificate_data(csv_certificator, csv_certificate_fil
 
     assert data == certificate_data
 
+
 def test_csv_certificator_certificate_data_with_custom_delimiter(csv_certificator, semicolon_csv_certificate_file, certificate_data):
     csv_certificator.delimiter = ';'
     with mock.patch('builtins.open', mock.Mock(return_value=semicolon_csv_certificate_file)):
