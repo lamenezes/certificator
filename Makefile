@@ -18,4 +18,4 @@ build: clean
 	python setup.py sdist
 
 test:
-	py.test -x
+	pytest -x

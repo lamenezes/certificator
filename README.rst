@@ -2,7 +2,7 @@
 Certificator
 ============
 
-Event certificate generator. Currently supports CSV/JSON + Meetup integration.
+Event certificate generator. Currently supports CSV/JSON + Meetup.
 
 --------------
 How to install
