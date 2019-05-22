@@ -18,7 +18,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'certificator=certificator.__main__:generate',
+            'certificator=certificator.__main__:main',
         ]
     },
     classifiers=[
